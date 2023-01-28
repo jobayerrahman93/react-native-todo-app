@@ -1,6 +1,7 @@
 export const typography ={
     primary:'Poppins-Regular',
-    primaryBold:'Poppins-bold',
-    bold: 'Antonio-Medium'
+    primaryBold:'Poppins-Bold',
+    medium: 'Antonio-Medium',
+    bold:'Antonio-Bold'
 
 }
