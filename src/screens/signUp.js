@@ -1,3 +1,4 @@
+import Checkbox from 'expo-checkbox';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,7 +8,7 @@ import { spacing } from '../theme/spacing';
 
 const SignUp = ({navigation}) => {
 
-    const {showPassword,setShoPassword} = useState(false);
+  const [isChecked, setChecked] = useState(false);
 
     return (
         <SafeAreaView>
@@ -23,9 +24,20 @@ const SignUp = ({navigation}) => {
         <View style={styles.inputWrapper}>
         <TextInput placeholderTextColor={colors.gray} style={styles.input} placeholder='Name'/>
         <TextInput placeholderTextColor={colors.gray} style={styles.input} placeholder='Enter Your Phone'/>
-        <TextInput secureTextEntry placeholderTextColor={colors.gray} style={styles.input} placeholder='Password'/>
-        <TextInput secureTextEntry={true} placeholderTextColor={colors.gray} style={styles.input} placeholder='Confirm password'/>
+        <TextInput secureTextEntry={isChecked ? false :true} placeholderTextColor={colors.gray} style={styles.input} placeholder='Password'/>
+        <TextInput secureTextEntry={isChecked ? false :true} placeholderTextColor={colors.gray} style={styles.input} placeholder='Confirm password'/>
 
+        <View style={styles.checkboxContainer}>
+    
+        <Checkbox
+          style={styles.checkbox}
+          value={isChecked}
+          onValueChange={setChecked}
+          color={isChecked ? colors.yellow : undefined}
+
+        />
+        <Text preset='small' style={styles.label}>Show Password</Text>
+      </View>
         <Pressable style={styles.submitBtn} >
               <Text style={{fontWeight:'bold'}}>SIGN UP</Text>
         </Pressable>
@@ -103,7 +115,18 @@ const styles= StyleSheet.create({
         borderBottomColor: colors.gray,
         borderBottomWidth:1,
         fontSize:10
-      }
+      },
+      checkboxContainer: {
+        flexDirection: 'row',
+        marginBottom: 20,
+      },
+      checkbox: {
+        alignSelf: 'center',
+      },
+      label: {
+        margin: 4,
+        color:colors.gray
+      },
 
 
 })
