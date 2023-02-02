@@ -1,14 +1,44 @@
 import Checkbox from 'expo-checkbox';
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Text from '../components/text/text';
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
+import { auth } from '../utils/config';
+
+
 
 const SignUp = ({navigation}) => {
 
   const [isChecked, setChecked] = useState(false);
+
+  const [authValue,setAuthValue] = useState({
+    name:'',
+    email:'',
+    password:'',
+    confirmPassword:''
+  })
+
+
+  const handleSubmit=()=>{
+
+  
+createUserWithEmailAndPassword(auth, authValue.email,authValue.password)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+ 
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+
+    console.log(errorMessage)
+ 
+  });
+  }
 
     return (
         <SafeAreaView>
@@ -22,10 +52,14 @@ const SignUp = ({navigation}) => {
             {/* input wrapper */}
 
         <View style={styles.inputWrapper}>
-        <TextInput placeholderTextColor={colors.gray} style={styles.input} placeholder='Name'/>
-        <TextInput placeholderTextColor={colors.gray} style={styles.input} placeholder='Enter Your Phone'/>
-        <TextInput secureTextEntry={isChecked ? false :true} placeholderTextColor={colors.gray} style={styles.input} placeholder='Password'/>
-        <TextInput secureTextEntry={isChecked ? false :true} placeholderTextColor={colors.gray} style={styles.input} placeholder='Confirm password'/>
+
+        <TextInput onChangeText={(text)=>setAuthValue({...authValue,name:text})} placeholderTextColor={colors.gray} style={styles.input} placeholder='Name'/>
+
+        <TextInput onChangeText={(text)=>setAuthValue({...authValue,email:text})} placeholderTextColor={colors.gray} style={styles.input} placeholder='Enter Email'/>
+
+        <TextInput onChangeText={(text)=>setAuthValue({...authValue,password:text})} secureTextEntry={isChecked ? false :true} placeholderTextColor={colors.gray} style={styles.input} placeholder='Password'/>
+
+        <TextInput onChangeText={(text)=>setAuthValue({...authValue,confirmPassword:text})} secureTextEntry={isChecked ? false :true} placeholderTextColor={colors.gray} style={styles.input} placeholder='Confirm password'/>
 
         <View style={styles.checkboxContainer}>
     
@@ -38,7 +72,7 @@ const SignUp = ({navigation}) => {
         />
         <Text preset='small' style={styles.label}>Show Password</Text>
       </View>
-        <Pressable style={styles.submitBtn} >
+        <Pressable onPress={handleSubmit} style={styles.submitBtn} >
               <Text style={{fontWeight:'bold'}}>SIGN UP</Text>
         </Pressable>
 

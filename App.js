@@ -2,7 +2,7 @@ import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { initializeApp } from "firebase/app";
+
 import { useCallback, useEffect, useState } from 'react';
 import { StatusBar, StyleSheet } from 'react-native';
 import Create from './src/screens/create';
@@ -11,14 +11,13 @@ import Home from './src/screens/home';
 import SignIn from './src/screens/signIn';
 import SignUp from './src/screens/signUp';
 import { colors } from './src/theme/colors';
-import { firebaseConfig } from './src/utils/config';
+// import { firebaseConfig } from './src/utils/config';
 
 const Stack = createNativeStackNavigator();
 SplashScreen.preventAutoHideAsync();
 
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+
 
 const MyTheme = {
   ...DefaultTheme,
