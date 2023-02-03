@@ -34,7 +34,7 @@ const SignIn = ({navigation}) => {
             </View>
 
 
-            {/* signup */}
+       
 
          
 

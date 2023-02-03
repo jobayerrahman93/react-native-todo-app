@@ -1,18 +1,22 @@
 import Checkbox from 'expo-checkbox';
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { addDoc, collection } from 'firebase/firestore';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Text from '../components/text/text';
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
-import { auth } from '../utils/config';
+import { auth, db } from '../utils/config';
+import { LoadingBtn } from '../utils/loadingBtn';
 
 
 
 const SignUp = ({navigation}) => {
 
   const [isChecked, setChecked] = useState(false);
+  const [isLoading,setIsLoading]=useState(false);
 
   const [authValue,setAuthValue] = useState({
     name:'',
@@ -22,22 +26,43 @@ const SignUp = ({navigation}) => {
   })
 
 
-  const handleSubmit=()=>{
+  const handleSubmit= async()=>{
+
+    setIsLoading(true);
+    try {
+
+   const res = await createUserWithEmailAndPassword(auth, authValue.email,authValue.password);
+   console.log(res);
+
+   if(res.user.uid){
+
+    showMessage({
+      message: "Successfully user created",
+      type: "success",
+    });
+
+    const docRef = await addDoc(collection(db, "users"), {
+      name: authValue.name,
+      email: authValue.email,
+      password: authValue.password
+    });
+    console.log("Document written with ID: ", docRef.id);
+
+    setIsLoading(false);
+   }
+      
+    } catch (err) {
+      
+      showMessage({
+        message: `${err.message}`,
+        type: "info",
+      });
+
+    setIsLoading(false);
+
+    }
 
   
-createUserWithEmailAndPassword(auth, authValue.email,authValue.password)
-  .then((userCredential) => {
-    // Signed in 
-    const user = userCredential.user;
- 
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-
-    console.log(errorMessage)
- 
-  });
   }
 
     return (
@@ -72,18 +97,24 @@ createUserWithEmailAndPassword(auth, authValue.email,authValue.password)
         />
         <Text preset='small' style={styles.label}>Show Password</Text>
       </View>
-        <Pressable onPress={handleSubmit} style={styles.submitBtn} >
+      
+      
+      {!isLoading ?   <Pressable onPress={handleSubmit} style={styles.submitBtn} >
               <Text style={{fontWeight:'bold'}}>SIGN UP</Text>
-        </Pressable>
+        </Pressable>:<LoadingBtn title='SIGN UP'/>
+   
+
+}
 
 
         
 
 
-        <Pressable onPress={()=>navigation.navigate('signIn')}  style={styles.isSignUp}>
+     <Pressable onPress={()=>navigation.navigate('signIn')}  style={styles.isSignUp}>
             <Text preset='small'  style={styles.dontHaveAccount}>Already have an account ?</Text>
             <Text style={styles.signUpLink} preset='bold' >SIGN IN</Text>
         </Pressable>
+        
 
         </View>
 

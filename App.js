@@ -2,22 +2,22 @@ import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { onAuthStateChanged } from 'firebase/auth';
 
 import { useCallback, useEffect, useState } from 'react';
-import { StatusBar, StyleSheet } from 'react-native';
+import { ActivityIndicator, StatusBar, StyleSheet, View } from 'react-native';
+import FlashMessage from 'react-native-flash-message';
 import Create from './src/screens/create';
 import Edit from './src/screens/edit';
 import Home from './src/screens/home';
 import SignIn from './src/screens/signIn';
 import SignUp from './src/screens/signUp';
 import { colors } from './src/theme/colors';
-// import { firebaseConfig } from './src/utils/config';
+import { auth } from './src/utils/config';
+
 
 const Stack = createNativeStackNavigator();
 SplashScreen.preventAutoHideAsync();
-
-
-
 
 const MyTheme = {
   ...DefaultTheme,
@@ -30,6 +30,29 @@ const MyTheme = {
 export default function App() {
 
   const [appIsReady, setAppIsReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [user,setUser] =useState(null);
+
+  // useEffect(()=>{
+  //   signOut(auth);
+  // },[])
+
+  useEffect(()=>{
+    const authSubscribed = onAuthStateChanged(auth,(user)=>{
+      if(user){
+        setUser(user)
+        setIsLoading(false)
+      }else{
+        setUser(null);
+        setIsLoading(false)
+      }
+    })
+
+    return authSubscribed
+
+  },[]);
+
+
 
   useEffect(() => {
     async function prepare() {
@@ -47,17 +70,14 @@ export default function App() {
       } catch (e) {
         console.warn(e);
       } finally {
-        // Tell the application to render
         setAppIsReady(true);
       }
     }
-
     prepare();
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
-
       await SplashScreen.hideAsync();
     }
   }, [appIsReady]);
@@ -66,7 +86,16 @@ export default function App() {
     return null;
   }
 
-  const user = false;
+
+ 
+
+  if(isLoading){
+    return <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+      <ActivityIndicator color={colors.yellow} size={'large'}/>
+    </View>
+  }
+
+
 
   return (
 <>
@@ -88,7 +117,7 @@ export default function App() {
   
       </Stack.Navigator>
     </NavigationContainer>
-
+    <FlashMessage position="top"  />
     <StatusBar style='light'/>
 </>
   );
