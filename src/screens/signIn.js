@@ -1,11 +1,38 @@
-import React from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Text from '../components/text/text';
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
+import { auth } from '../utils/config';
+import { LoadingBtn } from '../utils/loadingBtn';
 
 const SignIn = ({navigation}) => {
+
+  const [email,setEmail] = useState('');
+  const [password,setPassword] = useState('');
+  const [isLoading,setIsLoading]= useState(false);
+
+
+  const handleSubmit=async()=>{
+    setIsLoading(true);
+    try {
+
+     const res = await signInWithEmailAndPassword(auth,email,password);
+
+     setIsLoading(false)
+      
+    } catch (err) {
+      console.log(err.message);
+     setIsLoading(false)
+
+    }
+
+    
+  }
+
+
     return (
         <SafeAreaView>
             <View style={styles.container}>
@@ -18,12 +45,15 @@ const SignIn = ({navigation}) => {
                 {/* input wrapper */}
 
             <View style={styles.inputWrapper}>
-            <TextInput placeholderTextColor={colors.gray} style={styles.input1} placeholder='Enter Your Phone'/>
-            <TextInput placeholderTextColor={colors.gray} style={styles.input2} placeholder='Enter Your Phone'/>
+            <TextInput onChangeText={(text)=>setEmail(text)} placeholderTextColor={colors.gray} style={styles.input1} placeholder='Enter Your Email'/>
+            <TextInput onChangeText={(text)=>setPassword(text)} secureTextEntry={true} placeholderTextColor={colors.gray} style={styles.input2} placeholder='Enter password'/>
 
-            <Pressable style={styles.submitBtn} >
+        {  !isLoading ? <Pressable onPress={handleSubmit} style={styles.submitBtn} >
                   <Text style={{fontWeight:'bold'}}>SIGN IN</Text>
             </Pressable>
+            :
+            <LoadingBtn title='SIGN IN'/>
+            }
 
 
             <Pressable onPress={()=>navigation.navigate('signUp')}  style={styles.isSignUp}>
@@ -32,11 +62,6 @@ const SignIn = ({navigation}) => {
             </Pressable>
 
             </View>
-
-
-       
-
-         
 
             </View>
         </SafeAreaView>
