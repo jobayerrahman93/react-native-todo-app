@@ -1,6 +1,8 @@
+import Checkbox from 'expo-checkbox';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Text from '../components/text/text';
 import { colors } from '../theme/colors';
@@ -13,6 +15,7 @@ const SignIn = ({navigation}) => {
   const [email,setEmail] = useState('');
   const [password,setPassword] = useState('');
   const [isLoading,setIsLoading]= useState(false);
+  const [isChecked, setChecked] = useState(false);
 
 
   const handleSubmit=async()=>{
@@ -22,13 +25,21 @@ const SignIn = ({navigation}) => {
      const res = await signInWithEmailAndPassword(auth,email,password);
 
      setIsLoading(false)
+     
+    showMessage({
+      message: "Successfully Logged in",
+      type: "success",
+    });
       
     } catch (err) {
-      console.log(err.message);
-     setIsLoading(false)
+     
+     setIsLoading(false);
+     showMessage({
+      message: `${err.message}`,
+      type: "info",
+    });
 
     }
-
     
   }
 
@@ -45,8 +56,23 @@ const SignIn = ({navigation}) => {
                 {/* input wrapper */}
 
             <View style={styles.inputWrapper}>
+
             <TextInput onChangeText={(text)=>setEmail(text)} placeholderTextColor={colors.gray} style={styles.input1} placeholder='Enter Your Email'/>
-            <TextInput onChangeText={(text)=>setPassword(text)} secureTextEntry={true} placeholderTextColor={colors.gray} style={styles.input2} placeholder='Enter password'/>
+
+            <TextInput onChangeText={(text)=>setPassword(text)} secureTextEntry={isChecked ? false :true}  placeholderTextColor={colors.gray} style={styles.input2} placeholder='Enter password'/>
+
+        <View style={styles.checkboxContainer}>
+    
+        <Checkbox
+          style={styles.checkbox}
+          value={isChecked}
+          onValueChange={setChecked}
+          color={isChecked ? colors.yellow : undefined}
+
+        />
+        <Text preset='small' style={styles.label}>Show Password</Text>
+      </View>
+
 
         {  !isLoading ? <Pressable onPress={handleSubmit} style={styles.submitBtn} >
                   <Text style={{fontWeight:'bold'}}>SIGN IN</Text>
@@ -127,7 +153,18 @@ const styles= StyleSheet.create({
         borderBottomColor: colors.gray,
         borderBottomWidth:1,
         fontSize:10
-      }
+      },
+      checkboxContainer: {
+        flexDirection: 'row',
+        marginTop: 20,
+      },
+      checkbox: {
+        alignSelf: 'center',
+      },
+      label: {
+        margin: 4,
+        color:colors.gray
+      },
 
 
 })

@@ -46,7 +46,7 @@ const SignUp = ({navigation}) => {
       email: authValue.email,
       password: authValue.password
     });
-    console.log("Document written with ID: ", docRef.id);
+    
 
     setIsLoading(false);
    }
@@ -106,23 +106,12 @@ const SignUp = ({navigation}) => {
 
 }
 
-
-        
-
-
      <Pressable onPress={()=>navigation.navigate('signIn')}  style={styles.isSignUp}>
             <Text preset='small'  style={styles.dontHaveAccount}>Already have an account ?</Text>
             <Text style={styles.signUpLink} preset='bold' >SIGN IN</Text>
         </Pressable>
-        
-
+      
         </View>
-
-
-        {/* signup */}
-
-     
-
         </View>
     </SafeAreaView>
     );

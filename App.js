@@ -117,7 +117,7 @@ export default function App() {
   
       </Stack.Navigator>
     </NavigationContainer>
-    <FlashMessage position="top"  />
+    <FlashMessage position="bottom"  />
     <StatusBar style='light'/>
 </>
   );
