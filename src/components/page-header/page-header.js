@@ -10,15 +10,19 @@ export default function PageHeader({backBtn, title="Todo App"}) {
     const navigation = useNavigation();
   return (
     <View style={styles.container}>
-        {
+       <View style={{flex:1}}>
+       {
             backBtn && <Pressable onPress={()=>{
                 navigation.goBack();
             }}>
-            <AntDesign style={{marginRight:10}} name="arrowleft" size={24} color="white" />
+            <AntDesign  name="arrowleft" size={24} color="white" />
                 
             </Pressable>
         }
-      <Text preset='h2' style={{textTransform:'uppercase'}}>{title}</Text>
+       </View>
+        <View style={{flex:2,justifyContent:'center'}}>
+      <Text preset='h4' style={styles.title}>{title}</Text>
+        </View>
     </View>
   )
 }
@@ -29,7 +33,10 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.3,
         borderBottomColor: colors.white,
         flexDirection:'row',
-        alignItems:'center',
-    
-    }
+      
+      },
+      title:{
+        textTransform:'uppercase',
+
+      }
 })

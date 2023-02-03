@@ -103,7 +103,9 @@ export default function App() {
       <Stack.Navigator   screenOptions={{ headerShown: false }} >
         {
           user ? <>
-              <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen name="Home" >
+                  {(props)=><Home {...props} user={user}/>}
+                </Stack.Screen>
               <Stack.Screen name="edit" component={Edit} />
               <Stack.Screen name="create" component={Create} />
           </>
@@ -114,7 +116,7 @@ export default function App() {
           </>
         }
      
-  
+        
       </Stack.Navigator>
     </NavigationContainer>
     <FlashMessage position="bottom"  />
