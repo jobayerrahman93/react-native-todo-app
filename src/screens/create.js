@@ -9,11 +9,14 @@ import { spacing } from '../theme/spacing';
 import { db } from '../utils/config';
 import { LoadingBtn } from '../utils/loadingBtn';
 
-const Create = () => {
+const Create = ({user}) => {
+
+    console.log({user})
 
     const [title,setTitle]= useState('');
     const [description,setDescription]= useState('');
     const [isLoading,setIsLoading] = useState(false);
+    const [userId,setUserId]= useState(user.uid);
 
     const handleSubmit =async()=>{
 
@@ -24,7 +27,8 @@ const Create = () => {
         const docRef = await addDoc(collection(db, "task"), {
             title,
             description,
-            timestamp: serverTimestamp()
+            uid:userId,
+            created_at: serverTimestamp()
           });
           console.log("Document written with ID: ", docRef.id);
 
@@ -50,10 +54,6 @@ const Create = () => {
           setDescription('');
         
     }
-
-          
-
-       
 
     }
 

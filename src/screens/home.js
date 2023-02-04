@@ -1,22 +1,63 @@
-import React from 'react'
-import { Image, Pressable, StyleSheet, View } from 'react-native'
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
+import { collection, onSnapshot, query, where } from "firebase/firestore"
+import React, { useEffect, useState } from 'react'
+import { FlatList, Image, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Text from '../components/text/text'
 import { colors } from '../theme/colors'
 import { spacing } from '../theme/spacing'
-
+import { db } from '../utils/config'
 
 export default function Home({navigation,user}) {
 
-  // const user = route.params.user;
-  console.log(user.uid)
+  const [task,setTask]= useState([]);
+
+  useEffect(()=>{
+    const q = query(collection(db, "task"), where("uid", "==", user.uid));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const list = [];
+      querySnapshot.forEach((doc) => {
+
+        console.log(doc,'docs')
+          list.push({...doc.data(),id:doc.id});
+      });
+      // console.log(list)
+      setTask(list)
+  
+    });
+    return unsubscribe;
+  },[])
+
+
+  console.log(user.uid);
+  console.log(task)
+
+  const renderItem=({item})=>{
+
+    return(
+
+      <TouchableOpacity style={styles.taskList}>
+        
+        <View style={{flex:8,}}>
+        <Text preset="h4" style={{marginBottom:5}}>{item.title}</Text>
+          <Text preset="small">{item.description}</Text>
+        </View>
+        <View style={styles.iconBox}>
+        <FontAwesome onPress={()=>navigation.navigate('edit')} style={{marginBottom:9}} name="edit" size={20} color="white" />
+        <MaterialIcons  name="delete" size={20} color="white" />
+        </View>
+      </TouchableOpacity>
+    )
+
+  }
+
   return (
     <>
         {/* <SafeAreaView> */}
-          <View style={styles.container}>
-         <View style={{flex:1}} >
+
+        <View>
          <View style={styles.topUserBar}>
               <View>
-                <Text preset='h4'>HI, Jobayer</Text>
+                <Text preset='small'>HI, Welcome</Text>
               </View>
 
               <View style={styles.boxImg}>
@@ -24,22 +65,64 @@ export default function Home({navigation,user}) {
               </View>
             </View>
          </View>
+          <View style={styles.container}>
+        
 
 
-            {/* list of task start */}
+         {/* content section start */}
 
+{
+ !task.length &&<>
           <View style={styles.manageTask}>
+                    
+
+                    <Image style={styles.todoImg} source={require('../../assets/image/todo.png')}/>
+                  </View>
+
+                  <View style={styles.createTodoWrapper}>
+
+                  <Pressable onPress={()=>navigation.navigate('create')}  style={styles.createTodoBtn} >
+                          <Text style={{fontWeight:'bold'}}>Create Task</Text>
+                    </Pressable>
+                  </View>
+        </>
           
+          }
 
-            <Image style={styles.todoImg} source={require('../../assets/image/todo.png')}/>
-          </View>
+          {/* task list */}
 
-          <View style={styles.createTodoWrapper}>
+          <View>
 
-          <Pressable onPress={()=>navigation.navigate('create')}  style={styles.createTodoBtn} >
-                  <Text style={{fontWeight:'bold'}}>Create Task</Text>
+           <View style={styles.ongoingTask}>
+           <Text preset="h4">
+              Ongoing Task
+            </Text>
+           <Pressable >
+              <Text style={styles.seeAll} preset="small">
+                  See all
+              </Text>
             </Pressable>
+           </View>
+
+
+
+
+           {/* list box */}
+
+            <View style={{marginTop:50}}>
+
+              
+                  <FlatList
+
+                  data={task}
+                  renderItem={renderItem}
+                  keyExtractor={(item)=>item.id}          
+
+                  />
+            </View>
+
           </View>
+
 
           </View>
         {/* </SafeAreaView> */}
@@ -59,7 +142,19 @@ const styles = StyleSheet.create({
   topUserBar:{
     flexDirection: 'row',
     justifyContent:'space-between',
-    alignItems:'center'
+    alignItems:'center',
+    padding: spacing[4],
+    borderBottomWidth: 0.8,
+    borderBottomColor: colors.darkBlue,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.6,
+    
+    elevation: 1,  
   },
   userImg:{
     height:30,
@@ -100,5 +195,33 @@ const styles = StyleSheet.create({
     paddingVertical:spacing[2],
     marginTop:spacing[10],
     width:150
+  },
+  ongoingTask:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    marginTop:spacing[6]
+  },
+  seeAll:{
+    textDecorationStyle:"double",
+    textDecorationLine:'underline'
+
+  },
+  taskList:{
+    backgroundColor:colors.darkBlue,
+    marginBottom:15,
+    padding:10,
+    borderRadius:7,
+    flex:1,
+    flexDirection:'row',
+    alignItems:'center'
+    // maxHeight:100,
+    // overflow:'hidden'
+  },
+  iconBox:{
+    flex:1,
+    position:'absolute',
+    right:12,
+    zIndex:999
   }
 })
