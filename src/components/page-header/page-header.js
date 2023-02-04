@@ -30,13 +30,20 @@ export default function PageHeader({backBtn, title="Todo App"}) {
 const styles = StyleSheet.create({
     container:{
         padding: spacing[4],
-        borderBottomWidth: 0.3,
-        borderBottomColor: colors.white,
+        borderBottomWidth: 0.8,
+        borderBottomColor: colors.darkBlue,
         flexDirection:'row',
+        shadowOffset: {width: 2, height: 7},  
+        shadowColor: colors.darkBlue,  
+        shadowOpacity: 0.2,  
+        shadowRadius: 3,  
+        elevation: 20,  
+
       
       },
       title:{
         textTransform:'uppercase',
+        color:colors.yellow
 
       }
 })
