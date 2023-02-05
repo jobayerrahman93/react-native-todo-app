@@ -33,9 +33,7 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [user,setUser] =useState(null);
 
-  // useEffect(()=>{
-  //   signOut(auth);
-  // },[])
+
 
   useEffect(()=>{
     const authSubscribed = onAuthStateChanged(auth,(user)=>{
@@ -110,6 +108,7 @@ export default function App() {
               <Stack.Screen name="create" >
               {(props)=><Create {...props} user={user}/>}
                 </Stack.Screen>
+             
           </>
           :
           <>
