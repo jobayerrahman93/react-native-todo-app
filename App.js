@@ -12,6 +12,7 @@ import Edit from './src/screens/edit';
 import Home from './src/screens/home';
 import SignIn from './src/screens/signIn';
 import SignUp from './src/screens/signUp';
+import Single from './src/screens/single';
 import { colors } from './src/theme/colors';
 import { auth } from './src/utils/config';
 
@@ -107,6 +108,9 @@ export default function App() {
               <Stack.Screen name="edit" component={Edit} />
               <Stack.Screen name="create" >
               {(props)=><Create {...props} user={user}/>}
+                </Stack.Screen>
+              <Stack.Screen name="single" >
+              {(props)=><Single {...props} user={user}/>}
                 </Stack.Screen>
              
           </>

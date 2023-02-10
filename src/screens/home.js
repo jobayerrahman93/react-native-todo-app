@@ -1,14 +1,13 @@
 import { AntDesign, FontAwesome, MaterialIcons } from '@expo/vector-icons';
-import { signOut } from 'firebase/auth';
 import { collection, deleteDoc, doc, onSnapshot, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Image, Pressable, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, Pressable, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { Menu, MenuItem } from 'react-native-material-menu';
 import Text from '../components/text/text';
 import { homeScreenStyle } from '../stylesheet/homeStyle';
 import { colors } from '../theme/colors';
-import { auth, db } from '../utils/config';
+import { db } from '../utils/config';
 
 export default function Home({navigation,user}) {
 
@@ -17,33 +16,33 @@ export default function Home({navigation,user}) {
 
   const [visible, setVisible] = useState(false);
 
-  const hideMenu = () =>{
-    signOut(auth);
-     setVisible(false);
-    };
-
-  const showMenu = () => setVisible(true);
 
 
 
   useEffect(()=>{
 
-    setIsLoading(true)
-    
-    const q = query(collection(db, "task"), where("uid", "==", user.uid));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const list = [];
+    setIsLoading(true);
+
+      const q = query(collection(db, "task"), where("uid", "==", user.uid));
+     
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
 
-        // console.log(doc,'docs')
-          list.push({...doc.data(),id:doc.id});
+          setTask(prev=> [...prev,{...doc.data(),id:doc.id}])
       });
-      // console.log(list)
-      setTask(list);  
     });
-    setIsLoading(false)
-    return unsubscribe;
-  },[])
+
+    setIsLoading(false);
+    return ()=> unsubscribe();
+    
+  },[]);
+
+
+  const hideMenu = () =>{
+     setVisible(false);
+    };
+
+  const showMenu = () => setVisible(true);
 
 
   const handleDelete=async(id)=>{
@@ -72,7 +71,9 @@ export default function Home({navigation,user}) {
 
     return(
 
-      <TouchableOpacity style={styles.taskList}>
+      <TouchableOpacity onPress={()=>(navigation.navigate('single',{
+        item
+      }))} style={styles.taskList}>
         
         <View style={{flex:8}}>
         <Text preset="h4" style={{marginBottom:5}}>{item.title}</Text>
@@ -107,7 +108,7 @@ export default function Home({navigation,user}) {
 
   return (
     <>
-        {/* <SafeAreaView style={{flex:1}}> */}
+        <SafeAreaView style={{flex:1}}>
 
         <View>
          <View style={styles.topUserBar}>
@@ -151,9 +152,8 @@ export default function Home({navigation,user}) {
           
 
          {/* content section start */}
-
 {
- task.length ? <>
+  task.length ? <>
         
             {/* task list */}
 
@@ -194,7 +194,7 @@ export default function Home({navigation,user}) {
 
         <View  style={styles.createTaskBtnWrapper}>
 
-          <Pressable onPress={()=>navigation.navigate('dummy')}  style={styles.createTaskBtn}>
+          <Pressable onPress={()=>navigation.navigate('create')}  style={styles.createTaskBtn}>
 
           <AntDesign name="plus" size={40} color={colors.darkBlue} />
           </Pressable>
@@ -219,11 +219,9 @@ export default function Home({navigation,user}) {
           
           }
 
-      
-
-
+    
           </View>
-        {/* </SafeAreaView> */}
+        </SafeAreaView>
     </>
   )
 }
