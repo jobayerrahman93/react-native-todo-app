@@ -13,29 +13,37 @@ export default function Home({navigation,user}) {
 
   const [task,setTask]= useState([]);
   const [isLoading,setIsLoading]= useState(true);
-
   const [visible, setVisible] = useState(false);
 
 
 
 
-  useEffect(()=>{
 
+  useEffect(()=>{
     setIsLoading(true);
 
       const q = query(collection(db, "task"), where("uid", "==", user.uid));
      
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const list=[]
       querySnapshot.forEach((doc) => {
 
-          setTask(prev=> [...prev,{...doc.data(),id:doc.id}])
+        console.log(doc.data,'d')
+
+        list.push({...doc.data(),id:doc.id})
       });
+      setTask(list);
     });
 
     setIsLoading(false);
     return ()=> unsubscribe();
     
   },[]);
+
+  console.log(task)
+
+
+
 
 
   const hideMenu = () =>{
@@ -71,7 +79,7 @@ export default function Home({navigation,user}) {
 
     return(
 
-      <TouchableOpacity onPress={()=>(navigation.navigate('single',{
+      <TouchableOpacity key={item.id} onPress={()=>(navigation.navigate('single',{
         item
       }))} style={styles.taskList}>
         
@@ -90,20 +98,11 @@ export default function Home({navigation,user}) {
 
   }
 
-
-  console.log(task)
-  console.log(isLoading)
-
-
   if(isLoading){
     return <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
       <ActivityIndicator color={colors.yellow} size={'large'}/>
     </View>
   }
-
-
-  console.log(visible,'vis')
-
 
 
   return (
@@ -170,19 +169,15 @@ export default function Home({navigation,user}) {
         </Pressable>
         </View>
 
-
-
-
-{/* list box */}
+          {/* list box */}
 
         <View style={{marginTop:50,marginBottom:100}}>
 
           
               <FlatList
-
               data={task}
               renderItem={renderItem}
-              keyExtractor={(item)=>item.id}          
+              keyExtractor={(item,index)=>index.toString()}          
 
               />
         </View>

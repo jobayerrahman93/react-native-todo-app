@@ -100,7 +100,7 @@ export const homeScreenStyle =StyleSheet.create({
     createTaskBtnWrapper:{
         position:"absolute",
         bottom:spacing[8],
-        right:10
+        right:15
     },
     createTaskBtn:{
      backgroundColor:colors.yellow,

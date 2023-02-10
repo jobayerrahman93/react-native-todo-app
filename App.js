@@ -102,7 +102,7 @@ export default function App() {
       <Stack.Navigator   screenOptions={{ headerShown: false }} >
         {
           user ? <>
-              <Stack.Screen name="Home" >
+              <Stack.Screen name="home" >
                   {(props)=><Home {...props} user={user}/>}
                 </Stack.Screen>
               <Stack.Screen name="edit" component={Edit} />

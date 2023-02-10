@@ -1,6 +1,6 @@
 import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import PageHeader from '../components/page-header/page-header';
 import Text from '../components/text/text';
@@ -9,7 +9,7 @@ import { spacing } from '../theme/spacing';
 import { db } from '../utils/config';
 import { LoadingBtn } from '../utils/loadingBtn';
 
-const Edit = ({route}) => {
+const Edit = ({route,navigation}) => {
 
     const {item}= route.params
 
@@ -21,10 +21,11 @@ const Edit = ({route}) => {
     const [itemId,setItemId]= useState(item.id);
 
     const handleSubmit =async()=>{
+      console.log('press')
 
-    setIsLoading(true);
-    
-    try {
+      setIsLoading(true);
+      
+      try {
 
 
         const taskRef = doc(db, "task", itemId);
@@ -41,8 +42,11 @@ const Edit = ({route}) => {
             type: "success",
           });
 
+
           setTitle('');
           setDescription('');
+
+          navigation.navigate('home');
 
           setIsLoading(false)
         
@@ -65,7 +69,8 @@ const Edit = ({route}) => {
         <>
           <PageHeader backBtn={true}  title=' Edit Task'/>
          
-        <View style={styles.container}>
+       <ScrollView>
+       <View style={styles.container}>
         <View style={styles.inputWrapper}>
             
             <View >
@@ -90,6 +95,7 @@ const Edit = ({route}) => {
             </View>
             
         </View>
+       </ScrollView>
 
 
             </>
